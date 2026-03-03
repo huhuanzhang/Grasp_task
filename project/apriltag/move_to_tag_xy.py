@@ -131,6 +131,10 @@ def main():
     ap.add_argument("--origin_x_cm", type=float, default=0.0, help="origin x (cm) in calibrated tag-plane frame")
     ap.add_argument("--origin_y_cm", type=float, default=0.0, help="origin y (cm) in calibrated tag-plane frame")
     ap.add_argument("--input_theta_deg", type=float, default=0.0, help="rotate input frame into calibrated tag-plane frame (deg)")
+    ap.add_argument("--flip_x", action="store_true", help="mirror local x before rotation/translation")
+    ap.add_argument("--flip_y", action="store_true", help="mirror local y before rotation/translation")
+    ap.add_argument("--x_span_cm", type=float, default=20.0, help="x span for mirror: x<-x_span-x")
+    ap.add_argument("--y_span_cm", type=float, default=20.0, help="y span for mirror: y<-y_span-y")
 
     ap.add_argument("--keep_z", action="store_true", help="keep current EE z (recommended default usage)")
     ap.add_argument("--z_base", type=float, default=None, help="target base z in meters if not keep_z")
@@ -145,7 +149,14 @@ def main():
     R, t = load_se2(args.se2)
 
     # Input point is local to user-defined frame; convert to calibrated tag-plane frame first
-    p_local = np.array([args.x_cm / 100.0, args.y_cm / 100.0], dtype=np.float64)
+    x_in = float(args.x_cm)
+    y_in = float(args.y_cm)
+    if args.flip_x:
+        x_in = float(args.x_span_cm) - x_in
+    if args.flip_y:
+        y_in = float(args.y_span_cm) - y_in
+
+    p_local = np.array([x_in / 100.0, y_in / 100.0], dtype=np.float64)
     th = np.deg2rad(float(args.input_theta_deg))
     c, s = np.cos(th), np.sin(th)
     R_in = np.array([[c, -s], [s, c]], dtype=np.float64)
@@ -172,7 +183,7 @@ def main():
 
     p_goal = np.array([p_base_xy[0], p_base_xy[1], z_goal], dtype=np.float64)
 
-    print("[INFO] input local xy (m):", p_local.tolist())
+    print("[INFO] input local xy (m):", p_local.tolist(), f" flip_x={args.flip_x} flip_y={args.flip_y}")
     print("[INFO] input->tag origin (m):", origin.tolist(), " theta_deg=", float(args.input_theta_deg))
     print("[INFO] target tag xy (m):", p_tag.tolist())
     print("[INFO] target base xyz (m):", p_goal.tolist())

@@ -126,8 +126,11 @@ def main():
     ap.add_argument("--ee-frame", default="gripper_frame_link")
     ap.add_argument("--se2", default="outputs/T_base_tag_se2_from_q_first4.json")
 
-    ap.add_argument("--x_cm", type=float, required=True, help="target x in tag plane, cm")
-    ap.add_argument("--y_cm", type=float, required=True, help="target y in tag plane, cm")
+    ap.add_argument("--x_cm", type=float, required=True, help="target x in local input frame, cm")
+    ap.add_argument("--y_cm", type=float, required=True, help="target y in local input frame, cm")
+    ap.add_argument("--origin_x_cm", type=float, default=0.0, help="origin x (cm) in calibrated tag-plane frame")
+    ap.add_argument("--origin_y_cm", type=float, default=0.0, help="origin y (cm) in calibrated tag-plane frame")
+    ap.add_argument("--input_theta_deg", type=float, default=0.0, help="rotate input frame into calibrated tag-plane frame (deg)")
 
     ap.add_argument("--keep_z", action="store_true", help="keep current EE z (recommended default usage)")
     ap.add_argument("--z_base", type=float, default=None, help="target base z in meters if not keep_z")
@@ -140,7 +143,15 @@ def main():
     args = ap.parse_args()
 
     R, t = load_se2(args.se2)
-    p_tag = np.array([args.x_cm / 100.0, args.y_cm / 100.0], dtype=np.float64)
+
+    # Input point is local to user-defined frame; convert to calibrated tag-plane frame first
+    p_local = np.array([args.x_cm / 100.0, args.y_cm / 100.0], dtype=np.float64)
+    th = np.deg2rad(float(args.input_theta_deg))
+    c, s = np.cos(th), np.sin(th)
+    R_in = np.array([[c, -s], [s, c]], dtype=np.float64)
+    origin = np.array([args.origin_x_cm / 100.0, args.origin_y_cm / 100.0], dtype=np.float64)
+    p_tag = origin + (R_in @ p_local)
+
     p_base_xy = R @ p_tag + t
 
     robot = LeKiwiClient(LeKiwiClientConfig(remote_ip=args.remote_ip, id="my_alohamini"))
@@ -161,6 +172,8 @@ def main():
 
     p_goal = np.array([p_base_xy[0], p_base_xy[1], z_goal], dtype=np.float64)
 
+    print("[INFO] input local xy (m):", p_local.tolist())
+    print("[INFO] input->tag origin (m):", origin.tolist(), " theta_deg=", float(args.input_theta_deg))
     print("[INFO] target tag xy (m):", p_tag.tolist())
     print("[INFO] target base xyz (m):", p_goal.tolist())
     print("[INFO] current base xyz (m):", p0.tolist())

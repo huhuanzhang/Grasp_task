@@ -1,0 +1,51 @@
+Homework-Game1: branching factor in games.
+Suppose it is now ”red” player’s turn. See board
+situation on left figure.
+(A) How many different/distinct moves he can make?
+Write down details. For instance,
+5个 兵（solider) has 5 moves
+Left 炮 (cannon) has 3+3+1+6=13 moves
+…
+This value is the branching factor, or number of
+adjacent nodes on the chess board situation graph.
+(B) If he use 1-step look-ahead strategy, how many
+evaluation of heuristic (assessment of the board
+situation) evaluation he needs to do?
+(C) If he use 3-step look-ahead strategy, how many
+evaluation of heuristic evaluation he needs to do?
+
+Homework-Game2: Complete the rest steps of the top two incomplete
+game plays using your own instincts.
+
+Homework: Game3:
+Do value backup from the
+bottom layer to determine
+where to put the 1st x.
+
+2-step-ahead search using heuristic evaluation function
+
+Homework: Game4
+Write down the best move after this 2step-ahead search. Among the best
+moves, which one looks better？
+
+The complete search tree
+
+HOMEWORKGame5:
+Explain these
+properties
+
+Tree property:
+1. Leaf nodes occur at levels 5,6,7,8,9. Why?
+2. Leaf nodes on level 5 has value +1. Why?
+3. Leaf nodes on level 6 have value -1. Why?
+4. Leaf nodes on level 9 (bottom) have values 0 or 1. Why?
+5. How many leaf nodes on level 5?
+6. How many leaf nodes on level 6?
+7. How many leaf nodes on level 9?
+
+Homework： Game5. This tree is the
+same search tree in previous page
+
+The complete search tree
+
+

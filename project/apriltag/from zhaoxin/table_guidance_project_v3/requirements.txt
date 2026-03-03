@@ -1,0 +1,9 @@
+numpy>=1.23
+opencv-python>=4.7
+pyyaml>=6.0
+
+# AprilTag backend (recommended)
+pupil-apriltags>=1.0.4
+
+# FastSAM (Ultralytics)
+ultralytics>=8.0.0

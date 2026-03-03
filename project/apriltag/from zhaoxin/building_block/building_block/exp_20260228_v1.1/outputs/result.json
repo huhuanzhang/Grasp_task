@@ -1,0 +1,24 @@
+{
+  "reference_tag_id": 2,
+  "tag_size_m": 0.04,
+  "pixel_xy": [
+    2734.156575484557,
+    2338.409736569141
+  ],
+  "target_xy_m_in_tag_plane": [
+    -0.05524208331117678,
+    -0.07798999861521362
+  ],
+  "target_yaw_rad_in_plane": 1.4870429312656939,
+  "detected_tag_ids": [
+    2,
+    3,
+    4
+  ],
+  "fastsam": {
+    "device": "mps",
+    "imgsz": 640,
+    "conf": 0.25,
+    "iou": 0.9
+  }
+}

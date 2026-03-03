@@ -1,0 +1,15 @@
+README.md
+pyproject.toml
+src/table_guidance/__init__.py
+src/table_guidance/apriltag_backend.py
+src/table_guidance/calibration.py
+src/table_guidance/geom.py
+src/table_guidance/pose.py
+src/table_guidance/segmentation.py
+src/table_guidance/types.py
+src/table_guidance/viz.py
+src/table_guidance.egg-info/PKG-INFO
+src/table_guidance.egg-info/SOURCES.txt
+src/table_guidance.egg-info/dependency_links.txt
+src/table_guidance.egg-info/requires.txt
+src/table_guidance.egg-info/top_level.txt

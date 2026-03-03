@@ -1,9 +1,16 @@
 from __future__ import annotations
-import argparse, json
+import argparse, json, sys
 from pathlib import Path
 import cv2
 import numpy as np
 import yaml
+
+# Allow running as a script without `pip install -e .`
+_THIS = Path(__file__).resolve()
+_ROOT = _THIS.parents[1]
+_SRC = _ROOT / "src"
+if str(_SRC) not in sys.path:
+    sys.path.insert(0, str(_SRC))
 
 from table_guidance.apriltag_backend import apriltag_detect
 from table_guidance.segmentation import segment_target_mask

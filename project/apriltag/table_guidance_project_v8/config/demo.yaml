@@ -1,0 +1,31 @@
+# ===== Core =====
+reference_tag_id: 4
+tag_size_m: 0.04
+tag_family: "tag36h11"
+
+# ===== D455 RGB intrinsics (must match image resolution) =====
+camera:
+  width: 1280
+  height: 720
+  fx: 645.6649169921875
+  fy: 644.830322265625
+  cx: 642.4880981445312
+  cy: 362.65289306640625
+  dist_model: "distortion.inverse_brown_conrady"
+  dist: [-0.0548342689871788, 0.06200703606009483, -0.0005282682832330465, 0.0004060852515976876, -0.020286686718463898]
+
+# ===== Multi-tag plane fitting (least squares) =====
+plane_fit:
+  enabled: true
+  use_tag_corners: true     # fit plane using all detected tag corners (more points)
+  min_tags: 2
+  weight_by_decision_margin: true
+
+# ===== Motion helper =====
+pregrasp_offset_m: 0.08
+
+# ===== FastSAM =====
+fastsam:
+  imgsz: 640
+  conf: 0.25
+  iou: 0.9

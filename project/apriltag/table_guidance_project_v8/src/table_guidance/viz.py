@@ -22,21 +22,22 @@ def draw_target(image_bgr: np.ndarray,
                 yaw_rad: Optional[float],
                 extra: Optional[str]=None) -> np.ndarray:
     out = image_bgr.copy()
+    color = (0, 255, 0)  # green in BGR
     u, v = int(pixel_xy[0]), int(pixel_xy[1])
-    cv2.circle(out, (u,v), 6, (255,0,0), -1)
+    cv2.circle(out, (u,v), 6, color, -1)
     if axis_uv is not None:
         du, dv = float(axis_uv[0]), float(axis_uv[1])
         p2 = (int(u + du*80), int(v + dv*80))
-        cv2.arrowedLine(out, (u,v), p2, (255,0,0), 3, tipLength=0.15)
+        cv2.arrowedLine(out, (u,v), p2, color, 3, tipLength=0.15)
     y0 = max(30, v-25)
     cv2.putText(out, f"plane(x,y)=({plane_xy[0]:.3f},{plane_xy[1]:.3f}) m",
                 (max(10,u-360), y0),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,0,0), 2, cv2.LINE_AA)
+                cv2.FONT_HERSHEY_SIMPLEX, 0.7, color, 2, cv2.LINE_AA)
     if yaw_rad is not None:
         cv2.putText(out, f"yaw={yaw_rad:.3f} rad",
                     (max(10,u-360), y0+28),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,0,0), 2, cv2.LINE_AA)
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.7, color, 2, cv2.LINE_AA)
     if extra:
         cv2.putText(out, extra, (max(10,u-360), y0+56),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255,0,0), 2, cv2.LINE_AA)
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2, cv2.LINE_AA)
     return out

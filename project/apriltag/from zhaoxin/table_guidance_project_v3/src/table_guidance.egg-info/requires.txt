@@ -1,9 +1,0 @@
-numpy>=1.23
-opencv-python>=4.7
-pyyaml>=6.0
-
-[apriltag]
-pupil-apriltags>=1.0.4
-
-[fastsam]
-ultralytics>=8.0.0

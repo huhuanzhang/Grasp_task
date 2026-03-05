@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.venv/
+venv/
+
+# Build / packaging
+build/
+dist/
+*.egg-info/
+
+# Runtime outputs
+outputs/
+
+# Large model weights
+*.pt
+*.pth
+
+# OS/editor
+.DS_Store
+.vscode/
+.idea/

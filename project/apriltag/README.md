@@ -105,6 +105,11 @@ python d455_detect_and_move_qinterp.py --help
 python teleop_tag_grasp.py --help
 ```
 
+### 4.5 推荐的一键执行指令（当前主流程）
+```bash
+cd /home/hhz/.openclaw/workspace/project/apriltag && /home/hhz/miniconda3/envs/lerobot_alohamini/bin/python d455_detect_and_move_qinterp.py --remote_ip 172.16.0.14 --prompt "green stick"
+```
+
 ---
 
 ## 5. 常见产出

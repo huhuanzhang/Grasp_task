@@ -107,7 +107,86 @@ RERUN=OFF python3 seg_detection/realsense_d455_apriltag_cal_save_joints.py \
   --out_jsonl samples_no_tag_ok.jsonl
 ```
 
-### 4.3 视觉主流程（分割 + 坐标输出）
+### 4.3 jsonl 转 pairs.json（手动补坐标，严格一一对应）
+
+> 用途：从 `samples_no_tag_ok.jsonl` 里提取可见 Tag 的采样点，生成 `pairs_template.json`，你再手动填入每个点对应的 `dst_base_xy`。脚本会强制检查：数量必须一致，不能少/不能多。
+
+```bash
+cd /home/hhz/.openclaw/workspace/project/apriltag
+python3 - <<'PY'
+import json
+from pathlib import Path
+
+jsonl_path = Path('samples_no_tag_ok.jsonl')
+out_path = Path('pairs_template.json')
+
+if not jsonl_path.exists():
+    raise SystemExit(f"[ERROR] not found: {jsonl_path}")
+
+src = []
+for line in jsonl_path.read_text(encoding='utf-8').splitlines():
+    if not line.strip():
+        continue
+    d = json.loads(line)
+    if d.get('tag_visible') and d.get('T_cam_tag'):
+        T = d['T_cam_tag']
+        # 简化：取 tag 原点在相机坐标系的 x,y 作为可编辑模板点
+        src.append([float(T[0][3]), float(T[1][3])])
+
+if len(src) < 2:
+    raise SystemExit(f"[ERROR] visible tag samples too few: {len(src)}")
+
+pairs = {
+    "src_tag_xy": src,
+    "dst_base_xy": [[None, None] for _ in src],
+    "note": "手动把 dst_base_xy 每一行填成对应的 base 坐标；必须与 src_tag_xy 一一对应"
+}
+out_path.write_text(json.dumps(pairs, ensure_ascii=False, indent=2), encoding='utf-8')
+print(f"[OK] template saved: {out_path} (N={len(src)})")
+PY
+```
+
+手动填写完成后，先做严格校验（不允许多/少/空值）：
+
+```bash
+cd /home/hhz/.openclaw/workspace/project/apriltag
+python3 - <<'PY'
+import json
+from pathlib import Path
+
+p = Path('pairs_template.json')
+if not p.exists():
+    raise SystemExit('[ERROR] pairs_template.json not found')
+
+d = json.loads(p.read_text(encoding='utf-8'))
+src = d.get('src_tag_xy', [])
+dst = d.get('dst_base_xy', [])
+
+if len(src) != len(dst):
+    raise SystemExit(f"[ERROR] count mismatch: src={len(src)} dst={len(dst)}")
+
+for i, (a, b) in enumerate(zip(src, dst)):
+    if (not isinstance(a, list)) or (not isinstance(b, list)) or len(a) != 2 or len(b) != 2:
+        raise SystemExit(f"[ERROR] row {i}: each point must be [x, y]")
+    if any(v is None for v in b):
+        raise SystemExit(f"[ERROR] row {i}: dst_base_xy has None, please fill it")
+
+out = Path('pairs.json')
+out.write_text(json.dumps({"src_tag_xy": src, "dst_base_xy": dst}, ensure_ascii=False, indent=2), encoding='utf-8')
+print(f"[OK] pairs.json ready: {out} (N={len(src)})")
+PY
+```
+
+然后执行标定矩阵求解：
+
+```bash
+cd seg_detection/table_guidance_project_v8
+PYTHONPATH=src /home/hhz/miniconda3/envs/lerobot_alohamini/bin/python scripts/calibrate_base_from_points.py \
+  --pairs /home/hhz/.openclaw/workspace/project/apriltag/pairs.json \
+  --out /home/hhz/.openclaw/workspace/project/apriltag/outputs/T_base_tag_se2.json
+```
+
+### 4.4 视觉主流程（分割 + 坐标输出）
 
 ```bash
 cd seg_detection/table_guidance_project_v8

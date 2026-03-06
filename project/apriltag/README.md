@@ -143,6 +143,10 @@ python d455_detect_and_move_qinterp.py --help
 python teleop_tag_grasp.py --help
 ```
 
+- `d455_detect_and_move.py`：检测结果 → IK 求解 → 机械臂执行的主流程版本。
+- `d455_detect_and_move_qinterp.py`：检测结果 → 关节空间插值执行（当前主用，更稳）。
+- `teleop_tag_grasp.py`：遥操作 + D455 + Tag 可视化联调脚本，用于人工对位/调试。
+
 ### 4.6 当前推荐一键主流程（qinterp）
 
 ```bash
